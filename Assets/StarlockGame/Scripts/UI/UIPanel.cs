@@ -1,147 +1,150 @@
 using UnityEngine;
 using DG.Tweening;
 
-    [RequireComponent(typeof(CanvasGroup))]
-    public class UIPanel : MonoBehaviour
+[RequireComponent(typeof(CanvasGroup))]
+public class UIPanel : MonoBehaviour
+{
+    [Header("Animation Settings")]
+    [SerializeField] private float showDuration = 0.3f;
+    [SerializeField] private float hideDuration = 0.2f;
+    [SerializeField] private Ease showEase = Ease.OutBack;
+    [SerializeField] private Ease hideEase = Ease.InQuad;
+
+    [Header("Animation Type")]
+    [SerializeField] private bool useScaleAnimation = true;
+    [SerializeField] private bool useFadeAnimation = true;
+    [SerializeField] private float startScale = 0.8f;
+
+    private CanvasGroup canvasGroup;
+    private RectTransform rectTransform;
+    private Tween showTween;
+    private Tween hideTween;
+
+    private void EnsureInitialized()
     {
-        [Header("Animation Settings")]
-        [SerializeField] private float showDuration = 0.3f;
-        [SerializeField] private float hideDuration = 0.2f;
-        [SerializeField] private Ease showEase = Ease.OutBack;
-        [SerializeField] private Ease hideEase = Ease.InQuad;
-
-        [Header("Animation Type")]
-        [SerializeField] private bool useScaleAnimation = true;
-        [SerializeField] private bool useFadeAnimation = true;
-        [SerializeField] private float startScale = 0.8f;
-
-        private CanvasGroup canvasGroup;
-        private RectTransform rectTransform;
-        private Tween showTween;
-        private Tween hideTween;
-
-        protected virtual void Awake()
-        {
+        if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
+        if (rectTransform == null)
             rectTransform = GetComponent<RectTransform>();
+    }
+
+    protected virtual void Awake()
+    {
+        EnsureInitialized();
+    }
+
+    protected virtual void OnEnable()
+    {
+        Show();
+    }
+
+    public virtual void Show(System.Action onComplete = null)
+    {
+        EnsureInitialized();
+        
+        gameObject.SetActive(true);
+        
+        showTween?.Kill();
+        hideTween?.Kill();
+
+        if (useScaleAnimation)
+        {
+            rectTransform.localScale = Vector3.one * startScale;
+            showTween = rectTransform.DOScale(Vector3.one, showDuration)
+                .SetEase(showEase)
+                .SetUpdate(true);
         }
 
-        protected virtual void OnEnable()
+        if (useFadeAnimation)
         {
-            Show();
+            canvasGroup.alpha = 0f;
+            canvasGroup.DOFade(1f, showDuration)
+                .SetEase(Ease.OutQuad)
+                .SetUpdate(true)
+                .OnComplete(() => onComplete?.Invoke());
+        }
+        else
+        {
+            showTween?.OnComplete(() => onComplete?.Invoke());
         }
 
-        public virtual void Show(System.Action onComplete = null)
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+
+        if (AudioManager.Instance != null)
         {
-            gameObject.SetActive(true);
-            
-            showTween?.Kill();
-            hideTween?.Kill();
+            AudioManager.Instance.PlayPanelOpen();
+        }
+    }
 
-            if (useScaleAnimation)
-            {
-                rectTransform.localScale = Vector3.one * startScale;
-                showTween = rectTransform.DOScale(Vector3.one, showDuration)
-                    .SetEase(showEase)
-                    .SetUpdate(true);
-            }
+    public virtual void Hide(System.Action onComplete = null)
+    {
+        EnsureInitialized();
+        
+        showTween?.Kill();
+        hideTween?.Kill();
 
-            if (useFadeAnimation)
-            {
-                canvasGroup.alpha = 0f;
-                canvasGroup.DOFade(1f, showDuration)
-                    .SetEase(Ease.OutQuad)
-                    .SetUpdate(true)
-                    .OnComplete(() => onComplete?.Invoke());
-            }
-            else
-            {
-                showTween?.OnComplete(() => onComplete?.Invoke());
-            }
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
 
-            canvasGroup.interactable = true;
-            canvasGroup.blocksRaycasts = true;
-
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.PlayPanelOpen();
-            }
+        if (useScaleAnimation)
+        {
+            hideTween = rectTransform.DOScale(Vector3.one * startScale, hideDuration)
+                .SetEase(hideEase)
+                .SetUpdate(true);
         }
 
-        public virtual void Hide(System.Action onComplete = null)
+        if (useFadeAnimation)
         {
-            showTween?.Kill();
-            hideTween?.Kill();
-
-            canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
-
-            if (useScaleAnimation)
-            {
-                hideTween = rectTransform.DOScale(Vector3.one * startScale, hideDuration)
-                    .SetEase(hideEase)
-                    .SetUpdate(true);
-            }
-
-            if (useFadeAnimation)
-            {
-                canvasGroup.DOFade(0f, hideDuration)
-                    .SetEase(Ease.InQuad)
-                    .SetUpdate(true)
-                    .OnComplete(() =>
-                    {
-                        gameObject.SetActive(false);
-                        onComplete?.Invoke();
-                    });
-            }
-            else
-            {
-                hideTween?.OnComplete(() =>
+            canvasGroup.DOFade(0f, hideDuration)
+                .SetEase(Ease.InQuad)
+                .SetUpdate(true)
+                .OnComplete(() =>
                 {
                     gameObject.SetActive(false);
                     onComplete?.Invoke();
                 });
-            }
-
-            if (AudioManager.Instance != null)
+        }
+        else
+        {
+            hideTween?.OnComplete(() =>
             {
-                AudioManager.Instance.PlayPanelClose();
-            }
-        }
-        
-        private void EnsureInitialized()
-        {
-            if (canvasGroup == null)
-                canvasGroup = GetComponent<CanvasGroup>();
-            if (rectTransform == null)
-                rectTransform = GetComponent<RectTransform>();
+                gameObject.SetActive(false);
+                onComplete?.Invoke();
+            });
         }
 
-        public void HideInstant()
+        if (AudioManager.Instance != null)
         {
-            EnsureInitialized();
-            
-            showTween?.Kill();
-            hideTween?.Kill();
-
-            canvasGroup.alpha = 0f;
-            canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
-            rectTransform.localScale = Vector3.one * startScale;
-            gameObject.SetActive(false);
-        }
-
-        public void ShowInstant()
-        {
-            EnsureInitialized();
-            
-            showTween?.Kill();
-            hideTween?.Kill();
-
-            gameObject.SetActive(true);
-            canvasGroup.alpha = 1f;
-            canvasGroup.interactable = true;
-            canvasGroup.blocksRaycasts = true;
-            rectTransform.localScale = Vector3.one;
+            AudioManager.Instance.PlayPanelClose();
         }
     }
+
+    public void HideInstant()
+    {
+        EnsureInitialized();
+        
+        showTween?.Kill();
+        hideTween?.Kill();
+
+        canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+        rectTransform.localScale = Vector3.one * startScale;
+        gameObject.SetActive(false);
+    }
+
+    public void ShowInstant()
+    {
+        EnsureInitialized();
+        
+        showTween?.Kill();
+        hideTween?.Kill();
+
+        gameObject.SetActive(true);
+        canvasGroup.alpha = 1f;
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+        rectTransform.localScale = Vector3.one;
+    }
+}
