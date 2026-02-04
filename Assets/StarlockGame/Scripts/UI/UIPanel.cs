@@ -108,9 +108,19 @@ using DG.Tweening;
                 AudioManager.Instance.PlayPanelClose();
             }
         }
+        
+        private void EnsureInitialized()
+        {
+            if (canvasGroup == null)
+                canvasGroup = GetComponent<CanvasGroup>();
+            if (rectTransform == null)
+                rectTransform = GetComponent<RectTransform>();
+        }
 
         public void HideInstant()
         {
+            EnsureInitialized();
+            
             showTween?.Kill();
             hideTween?.Kill();
 
@@ -123,6 +133,8 @@ using DG.Tweening;
 
         public void ShowInstant()
         {
+            EnsureInitialized();
+            
             showTween?.Kill();
             hideTween?.Kill();
 
