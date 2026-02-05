@@ -224,6 +224,57 @@ MonoBehaviour:
   circleVisual: {fileID: 646069142}
   boundaryCollider: {fileID: 454802620}
   currentShapesInside: 0
+--- !u!1 &188860749
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 188860751}
+  - component: {fileID: 188860750}
+  m_Layer: 0
+  m_Name: ShapeSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &188860750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188860749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eeaa34d68597514cb748c3f3e206d54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shapeFactory: {fileID: 1124239540}
+  outerZone: {fileID: 869689498}
+  outerZonePhysics: {fileID: 1773982559}
+  pairsToSpawn: 5
+  minDistanceBetweenShapes: 0.5
+  spawnOnStart: 1
+  spawnedShapes: []
+--- !u!4 &188860751
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188860749}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &411376321
 GameObject:
   m_ObjectHideFlags: 0
@@ -438,7 +489,7 @@ EdgeCollider2D:
   m_GameObject: {fileID: 454802617}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 02d1caf3d2db3b3409e8ea7530b24168, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1047,7 +1098,7 @@ EdgeCollider2D:
   m_GameObject: {fileID: 874678788}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 02d1caf3d2db3b3409e8ea7530b24168, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1109,6 +1160,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeSize: 0.4
+  bounciness: 0.8
+  friction: 0.1
   shapesParent: {fileID: 1697208901}
 --- !u!4 &1124239541
 Transform:
@@ -1479,6 +1532,58 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &1773982558
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1773982560}
+  - component: {fileID: 1773982559}
+  m_Layer: 0
+  m_Name: OuterZonePhysics
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1773982559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773982558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e62d4b50c4f04d40886b7afadd624ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationController: {fileID: 61325439}
+  outerZone: {fileID: 869689498}
+  circleContainer: {fileID: 114358252}
+  tangentialForceMultiplier: 2
+  centrifugalForceMultiplier: 0.5
+  maxForce: 10
+  velocityDamping: 0.98
+  maxVelocity: 8
+--- !u!4 &1773982560
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773982558}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1782225629
 GameObject:
   m_ObjectHideFlags: 0
@@ -2003,3 +2108,5 @@ SceneRoots:
   - {fileID: 61325440}
   - {fileID: 1261144850}
   - {fileID: 1124239541}
+  - {fileID: 1773982560}
+  - {fileID: 188860751}

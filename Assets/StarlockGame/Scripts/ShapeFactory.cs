@@ -8,10 +8,15 @@ public class ShapeFactory : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float shapeSize = 0.4f;
 
+    [Header("Physics Material")]
+    [SerializeField] private float bounciness = 0.8f;
+    [SerializeField] private float friction = 0.1f;
+
     [Header("References")]
     [SerializeField] private Transform shapesParent;
 
     private Dictionary<ShapeType, Sprite> shapeSprites = new Dictionary<ShapeType, Sprite>();
+    private PhysicsMaterial2D bouncyMaterial;
     private bool isInitialized = false;
 
     private void Awake()
@@ -30,8 +35,16 @@ public class ShapeFactory : MonoBehaviour
     {
         if (isInitialized) return;
 
+        CreatePhysicsMaterial();
         LoadOrGenerateSprites();
         isInitialized = true;
+    }
+
+    private void CreatePhysicsMaterial()
+    {
+        bouncyMaterial = new PhysicsMaterial2D("ShapeBouncyMaterial");
+        bouncyMaterial.bounciness = bounciness;
+        bouncyMaterial.friction = friction;
     }
 
     private void LoadOrGenerateSprites()
@@ -83,8 +96,10 @@ public class ShapeFactory : MonoBehaviour
         rb.drag = 0.5f;
         rb.angularDrag = 0.5f;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.sharedMaterial = bouncyMaterial;
 
         PolygonCollider2D col = shapeObj.AddComponent<PolygonCollider2D>();
+        col.sharedMaterial = bouncyMaterial;
 
         Shape shape = shapeObj.AddComponent<Shape>();
         shape.Initialize(type, color, sprite);
@@ -126,5 +141,26 @@ public class ShapeFactory : MonoBehaviour
         }
 
         return shapeSprites.ContainsKey(type) ? shapeSprites[type] : null;
+    }
+
+    public PhysicsMaterial2D GetBouncyMaterial()
+    {
+        if (bouncyMaterial == null)
+        {
+            CreatePhysicsMaterial();
+        }
+        return bouncyMaterial;
+    }
+
+    public void SetPhysicsSettings(float newBounciness, float newFriction)
+    {
+        bounciness = newBounciness;
+        friction = newFriction;
+        
+        if (bouncyMaterial != null)
+        {
+            bouncyMaterial.bounciness = bounciness;
+            bouncyMaterial.friction = friction;
+        }
     }
 }
