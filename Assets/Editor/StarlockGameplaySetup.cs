@@ -201,7 +201,7 @@ public class StarlockGameplaySetup : EditorWindow
         sr.color = CircleColor;
         sr.sortingOrder = 0;
 
-        visual.transform.localScale = new Vector3(4f, 4f, 1f);
+        visual.transform.localScale = Vector3.one;
 
         return visual;
     }
@@ -285,12 +285,6 @@ public class StarlockGameplaySetup : EditorWindow
     {
         string spritePath = "Assets/StarlockGame/Sprites/Circle.png";
 
-        Sprite existingSprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
-        if (existingSprite != null)
-        {
-            return existingSprite;
-        }
-
         if (!AssetDatabase.IsValidFolder("Assets/StarlockGame/Sprites"))
         {
             AssetDatabase.CreateFolder("Assets/StarlockGame", "Sprites");
@@ -300,7 +294,6 @@ public class StarlockGameplaySetup : EditorWindow
         Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
         
         Color transparent = new Color(0, 0, 0, 0);
-        Color white = Color.white;
         
         float center = size / 2f;
         float outerRadius = size / 2f - 2f;

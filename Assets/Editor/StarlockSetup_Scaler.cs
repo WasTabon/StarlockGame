@@ -24,7 +24,7 @@ public class StarlockSetup_Scaler : EditorWindow
         EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         
         Debug.Log("GameplayScaler added and configured!");
-        EditorUtility.DisplayDialog("Done", "GameplayScaler added!\n\nIt will automatically scale the game area to fit 70% of screen width.", "OK");
+        EditorUtility.DisplayDialog("Done", "GameplayScaler added!\n\nIt will automatically scale the game area to fit 70% of screen width.\n\nZ position of RotationPivot will be preserved.", "OK");
     }
 
     private static void SetupScalerReferences(GameplayScaler scaler)
@@ -35,6 +35,7 @@ public class StarlockSetup_Scaler : EditorWindow
         if (rotationPivot != null)
         {
             so.FindProperty("rotationPivot").objectReferenceValue = rotationPivot.transform;
+            so.FindProperty("pivotZPosition").floatValue = rotationPivot.transform.position.z;
         }
         else
         {

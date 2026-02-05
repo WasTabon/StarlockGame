@@ -16,6 +16,7 @@ public class CircleContainer : MonoBehaviour
     [SerializeField] private int currentShapesInside = 0;
 
     private List<GameObject> shapesInside = new List<GameObject>();
+    private float spriteBaseSize = 4f;
 
     public float Radius => radius;
     public int MaxShapesInside => maxShapesInside;
@@ -30,6 +31,11 @@ public class CircleContainer : MonoBehaviour
         if (boundaryCollider == null)
         {
             boundaryCollider = GetComponentInChildren<EdgeCollider2D>();
+        }
+        
+        if (circleVisual != null && circleVisual.sprite != null)
+        {
+            spriteBaseSize = circleVisual.sprite.bounds.size.x;
         }
     }
 
@@ -130,11 +136,16 @@ public class CircleContainer : MonoBehaviour
 
     private void UpdateVisualSize()
     {
-        if (circleVisual != null)
+        if (circleVisual == null) return;
+
+        if (circleVisual.sprite != null)
         {
-            float diameter = radius * 2f;
-            circleVisual.transform.localScale = new Vector3(diameter, diameter, 1f);
+            spriteBaseSize = circleVisual.sprite.bounds.size.x;
         }
+
+        float diameter = radius * 2f;
+        float scale = diameter / spriteBaseSize;
+        circleVisual.transform.localScale = new Vector3(scale, scale, 1f);
     }
 
     private void OnDrawGizmosSelected()

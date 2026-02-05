@@ -13,6 +13,7 @@ public class GameplayScaler : MonoBehaviour
     [SerializeField] private float baseCircleRadius = 2f;
     [SerializeField] private float baseOuterRadius = 4f;
     [SerializeField] private float baseInnerRadius = 2.2f;
+    [SerializeField] private float pivotZPosition = 0f;
 
     [Header("Debug")]
     [SerializeField] private float currentScale = 1f;
@@ -26,6 +27,11 @@ public class GameplayScaler : MonoBehaviour
         if (mainCamera == null)
         {
             mainCamera = Camera.main;
+        }
+
+        if (rotationPivot != null)
+        {
+            pivotZPosition = rotationPivot.position.z;
         }
 
         ApplyScaling();
@@ -63,7 +69,7 @@ public class GameplayScaler : MonoBehaviour
         ApplyToRotationPivot();
         ApplyToCircleContainer();
         ApplyToOuterZone();
-        CenterVertically();
+        CenterPivot();
     }
 
     private void ApplyToRotationPivot()
@@ -91,11 +97,11 @@ public class GameplayScaler : MonoBehaviour
         outerZone.SetRadii(baseInnerRadius, baseOuterRadius);
     }
 
-    private void CenterVertically()
+    private void CenterPivot()
     {
         if (rotationPivot == null) return;
 
-        rotationPivot.position = Vector3.zero;
+        rotationPivot.position = new Vector3(0f, 0f, pivotZPosition);
     }
 
     public float GetCurrentScale()
@@ -120,6 +126,12 @@ public class GameplayScaler : MonoBehaviour
         baseInnerRadius = innerRadius;
         baseOuterRadius = outerRadius;
         ApplyScaling();
+    }
+
+    public void SetPivotZPosition(float z)
+    {
+        pivotZPosition = z;
+        CenterPivot();
     }
 
     private void OnDrawGizmosSelected()
