@@ -23,6 +23,7 @@ public class AudioManager : MonoBehaviour
         }
 
         Instance = this;
+        transform.SetParent(null);
         DontDestroyOnLoad(gameObject);
 
         if (sfxSource == null)

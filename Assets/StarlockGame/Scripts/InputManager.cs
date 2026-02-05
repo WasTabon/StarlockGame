@@ -17,6 +17,8 @@ public class InputManager : MonoBehaviour
 
     public System.Action<Shape> OnShapeTapped;
 
+    private bool inputEnabled = true;
+
     private void Start()
     {
         if (mainCamera == null)
@@ -27,6 +29,8 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
+        if (!inputEnabled) return;
+
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
@@ -170,6 +174,11 @@ public class InputManager : MonoBehaviour
         );
 
         rb.AddForce(force, ForceMode2D.Impulse);
+    }
+
+    public void SetInputEnabled(bool enabled)
+    {
+        inputEnabled = enabled;
     }
 
     public void SetTapRadius(float radius)

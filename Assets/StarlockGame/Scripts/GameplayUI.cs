@@ -9,14 +9,27 @@ public class GameplayUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private Button pauseButton;
 
+    [Header("Popups")]
+    [SerializeField] private VictoryPopup victoryPopup;
+    [SerializeField] private GameOverPopup gameOverPopup;
+
     [Header("Debug")]
     [SerializeField] private TextMeshProUGUI modeText;
     [SerializeField] private Button backToMenuButton;
 
+    public System.Action OnRestartClicked;
+    public System.Action OnNextLevelClicked;
+    public System.Action OnMenuClicked;
+
     private void Start()
     {
         UpdateModeDisplay();
-        
+        SetupButtons();
+        HideAllPopups();
+    }
+
+    private void SetupButtons()
+    {
         if (backToMenuButton != null)
         {
             backToMenuButton.onClick.AddListener(OnBackToMenuClicked);
@@ -25,6 +38,19 @@ public class GameplayUI : MonoBehaviour
         if (pauseButton != null)
         {
             pauseButton.onClick.AddListener(OnPauseClicked);
+        }
+
+        if (victoryPopup != null)
+        {
+            victoryPopup.OnNextLevelClicked += () => OnNextLevelClicked?.Invoke();
+            victoryPopup.OnRestartClicked += () => OnRestartClicked?.Invoke();
+            victoryPopup.OnMenuClicked += () => OnMenuClicked?.Invoke();
+        }
+
+        if (gameOverPopup != null)
+        {
+            gameOverPopup.OnRestartClicked += () => OnRestartClicked?.Invoke();
+            gameOverPopup.OnMenuClicked += () => OnMenuClicked?.Invoke();
         }
     }
 
@@ -72,7 +98,7 @@ public class GameplayUI : MonoBehaviour
 
     private void OnBackToMenuClicked()
     {
-        GameManager.Instance.ReturnToMainMenu();
+        OnMenuClicked?.Invoke();
     }
 
     private void OnPauseClicked()
@@ -84,6 +110,43 @@ public class GameplayUI : MonoBehaviour
         if (scoreText != null)
         {
             scoreText.text = score.ToString();
+        }
+    }
+
+    public void ShowVictoryPopup(int score, bool hasNextLevel)
+    {
+        if (victoryPopup == null)
+        {
+            Debug.LogWarning("VictoryPopup not assigned!");
+            return;
+        }
+
+        victoryPopup.Setup(score, hasNextLevel);
+        victoryPopup.Show();
+    }
+
+    public void ShowGameOverPopup(int score)
+    {
+        if (gameOverPopup == null)
+        {
+            Debug.LogWarning("GameOverPopup not assigned!");
+            return;
+        }
+
+        gameOverPopup.Setup(score);
+        gameOverPopup.Show();
+    }
+
+    public void HideAllPopups()
+    {
+        if (victoryPopup != null)
+        {
+            victoryPopup.HideInstant();
+        }
+
+        if (gameOverPopup != null)
+        {
+            gameOverPopup.HideInstant();
         }
     }
 

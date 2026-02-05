@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameplayController : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class GameplayController : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private int maxShapesInside = 10;
+    [SerializeField] private int maxLevel = 10;
+    [SerializeField] private float endGameDelay = 0.5f;
 
     private bool isGameOver = false;
     private bool isVictory = false;
@@ -30,9 +33,22 @@ public class GameplayController : MonoBehaviour
 
     private void Initialize()
     {
+        isGameOver = false;
+        isVictory = false;
+
         SetupRotationForCurrentLevel();
         SetupCircleContainer();
         SubscribeToEvents();
+
+        if (inputManager != null)
+        {
+            inputManager.SetInputEnabled(true);
+        }
+
+        if (gameplayUI != null)
+        {
+            gameplayUI.HideAllPopups();
+        }
     }
 
     private void SetupRotationForCurrentLevel()
@@ -45,6 +61,7 @@ public class GameplayController : MonoBehaviour
 
         RotationPreset preset = GetPresetForLevel(GetCurrentLevel());
         rotationController.SetPreset(preset);
+        rotationController.Resume();
     }
 
     private void SetupCircleContainer()
@@ -86,6 +103,18 @@ public class GameplayController : MonoBehaviour
             matchManager.OnMatchFound -= OnMatchFound;
             matchManager.OnMatchFound += OnMatchFound;
         }
+
+        if (gameplayUI != null)
+        {
+            gameplayUI.OnRestartClicked -= OnRestartClicked;
+            gameplayUI.OnRestartClicked += OnRestartClicked;
+
+            gameplayUI.OnNextLevelClicked -= OnNextLevelClicked;
+            gameplayUI.OnNextLevelClicked += OnNextLevelClicked;
+
+            gameplayUI.OnMenuClicked -= OnMenuClicked;
+            gameplayUI.OnMenuClicked += OnMenuClicked;
+        }
     }
 
     private void OnDestroy()
@@ -109,6 +138,13 @@ public class GameplayController : MonoBehaviour
         {
             matchManager.OnScoreChanged -= OnScoreChanged;
             matchManager.OnMatchFound -= OnMatchFound;
+        }
+
+        if (gameplayUI != null)
+        {
+            gameplayUI.OnRestartClicked -= OnRestartClicked;
+            gameplayUI.OnNextLevelClicked -= OnNextLevelClicked;
+            gameplayUI.OnMenuClicked -= OnMenuClicked;
         }
     }
 
@@ -174,13 +210,19 @@ public class GameplayController : MonoBehaviour
     {
         Debug.Log($"Match! +{points} points");
 
+        if (circleContainer != null)
+        {
+            circleContainer.RemoveShapeInside(shape1.gameObject);
+            circleContainer.RemoveShapeInside(shape2.gameObject);
+        }
+
         if (outerZone != null)
         {
             outerZone.RemoveShapeOutside(shape1.gameObject);
             outerZone.RemoveShapeOutside(shape2.gameObject);
         }
 
-        CheckVictoryCondition();
+        Invoke(nameof(CheckVictoryCondition), endGameDelay);
     }
 
     private void OnContainerFull()
@@ -194,6 +236,13 @@ public class GameplayController : MonoBehaviour
         {
             rotationController.Stop();
         }
+
+        if (inputManager != null)
+        {
+            inputManager.SetInputEnabled(false);
+        }
+
+        Invoke(nameof(ShowGameOverPopup), endGameDelay);
     }
 
     private void OnAllShapesCleared()
@@ -205,6 +254,8 @@ public class GameplayController : MonoBehaviour
 
     private void CheckVictoryCondition()
     {
+        if (isGameOver || isVictory) return;
+
         if (shapeSpawner == null) return;
 
         int remainingShapes = shapeSpawner.GetSpawnedCount();
@@ -219,6 +270,69 @@ public class GameplayController : MonoBehaviour
             {
                 rotationController.Stop();
             }
+
+            if (inputManager != null)
+            {
+                inputManager.SetInputEnabled(false);
+            }
+
+            Invoke(nameof(ShowVictoryPopup), endGameDelay);
+        }
+    }
+
+    private void ShowVictoryPopup()
+    {
+        if (gameplayUI == null) return;
+
+        int score = matchManager != null ? matchManager.CurrentScore : 0;
+        bool hasNextLevel = GetCurrentLevel() < maxLevel && 
+                           (GameManager.Instance == null || GameManager.Instance.CurrentMode == GameMode.Levels);
+
+        gameplayUI.ShowVictoryPopup(score, hasNextLevel);
+    }
+
+    private void ShowGameOverPopup()
+    {
+        if (gameplayUI == null) return;
+
+        int score = matchManager != null ? matchManager.CurrentScore : 0;
+        gameplayUI.ShowGameOverPopup(score);
+    }
+
+    private void OnRestartClicked()
+    {
+        Debug.Log("Restart clicked");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void OnNextLevelClicked()
+    {
+        Debug.Log("Next Level clicked");
+
+        if (GameManager.Instance != null)
+        {
+            int nextLevel = GameManager.Instance.SelectedLevel + 1;
+            if (nextLevel <= maxLevel)
+            {
+                GameManager.Instance.StartLevelMode(nextLevel);
+                return;
+            }
+        }
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void OnMenuClicked()
+    {
+        Debug.Log("Menu clicked");
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ReturnToMainMenu();
+        }
+        else
+        {
+            SceneManager.LoadScene("MainMenu");
         }
     }
 
