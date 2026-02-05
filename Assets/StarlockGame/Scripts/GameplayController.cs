@@ -7,6 +7,9 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private CircleContainer circleContainer;
     [SerializeField] private OuterZone outerZone;
     [SerializeField] private GameplayUI gameplayUI;
+    [SerializeField] private InputManager inputManager;
+    [SerializeField] private MatchManager matchManager;
+    [SerializeField] private ShapeSpawner shapeSpawner;
 
     [Header("Rotation Presets")]
     [SerializeField] private RotationPreset slowPreset;
@@ -16,6 +19,9 @@ public class GameplayController : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private int maxShapesInside = 10;
+
+    private bool isGameOver = false;
+    private bool isVictory = false;
 
     private void Start()
     {
@@ -65,6 +71,21 @@ public class GameplayController : MonoBehaviour
             outerZone.OnAllShapesCleared -= OnAllShapesCleared;
             outerZone.OnAllShapesCleared += OnAllShapesCleared;
         }
+
+        if (inputManager != null)
+        {
+            inputManager.OnShapeTapped -= OnShapeTapped;
+            inputManager.OnShapeTapped += OnShapeTapped;
+        }
+
+        if (matchManager != null)
+        {
+            matchManager.OnScoreChanged -= OnScoreChanged;
+            matchManager.OnScoreChanged += OnScoreChanged;
+
+            matchManager.OnMatchFound -= OnMatchFound;
+            matchManager.OnMatchFound += OnMatchFound;
+        }
     }
 
     private void OnDestroy()
@@ -77,6 +98,17 @@ public class GameplayController : MonoBehaviour
         if (outerZone != null)
         {
             outerZone.OnAllShapesCleared -= OnAllShapesCleared;
+        }
+
+        if (inputManager != null)
+        {
+            inputManager.OnShapeTapped -= OnShapeTapped;
+        }
+
+        if (matchManager != null)
+        {
+            matchManager.OnScoreChanged -= OnScoreChanged;
+            matchManager.OnMatchFound -= OnMatchFound;
         }
     }
 
@@ -112,14 +144,82 @@ public class GameplayController : MonoBehaviour
         }
     }
 
+    private void OnShapeTapped(Shape shape)
+    {
+        if (isGameOver || isVictory) return;
+
+        shape.OnEnteredCircle -= OnShapeEnteredCircle;
+        shape.OnEnteredCircle += OnShapeEnteredCircle;
+    }
+
+    private void OnShapeEnteredCircle(Shape shape)
+    {
+        shape.OnEnteredCircle -= OnShapeEnteredCircle;
+
+        if (matchManager != null)
+        {
+            matchManager.RegisterShapeInside(shape);
+        }
+    }
+
+    private void OnScoreChanged(int newScore)
+    {
+        if (gameplayUI != null)
+        {
+            gameplayUI.UpdateScore(newScore);
+        }
+    }
+
+    private void OnMatchFound(Shape shape1, Shape shape2, int points)
+    {
+        Debug.Log($"Match! +{points} points");
+
+        if (outerZone != null)
+        {
+            outerZone.RemoveShapeOutside(shape1.gameObject);
+            outerZone.RemoveShapeOutside(shape2.gameObject);
+        }
+
+        CheckVictoryCondition();
+    }
+
     private void OnContainerFull()
     {
-        Debug.Log("Container is full! Game Over!");
+        if (isGameOver || isVictory) return;
+
+        isGameOver = true;
+        Debug.Log("GAME OVER - Container is full!");
+
+        if (rotationController != null)
+        {
+            rotationController.Stop();
+        }
     }
 
     private void OnAllShapesCleared()
     {
-        Debug.Log("All shapes cleared! Victory!");
+        if (isGameOver || isVictory) return;
+
+        CheckVictoryCondition();
+    }
+
+    private void CheckVictoryCondition()
+    {
+        if (shapeSpawner == null) return;
+
+        int remainingShapes = shapeSpawner.GetSpawnedCount();
+        int shapesInside = matchManager != null ? matchManager.GetShapesInsideCount() : 0;
+
+        if (remainingShapes == 0 && shapesInside == 0)
+        {
+            isVictory = true;
+            Debug.Log("VICTORY - All shapes cleared!");
+
+            if (rotationController != null)
+            {
+                rotationController.Stop();
+            }
+        }
     }
 
     public void SetRotationPreset(RotationPreset preset)
@@ -145,6 +245,9 @@ public class GameplayController : MonoBehaviour
             rotationController.Resume();
         }
     }
+
+    public bool IsGameOver => isGameOver;
+    public bool IsVictory => isVictory;
 
     public CircleContainer GetCircleContainer() => circleContainer;
     public OuterZone GetOuterZone() => outerZone;
