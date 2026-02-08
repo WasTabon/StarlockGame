@@ -11,6 +11,7 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private InputManager inputManager;
     [SerializeField] private MatchManager matchManager;
     [SerializeField] private ShapeSpawner shapeSpawner;
+    [SerializeField] private JuiceManager juiceManager;
 
     [Header("Rotation Presets")]
     [SerializeField] private RotationPreset slowPreset;
@@ -196,6 +197,11 @@ public class GameplayController : MonoBehaviour
         {
             matchManager.RegisterShapeInside(shape);
         }
+
+        if (juiceManager != null)
+        {
+            juiceManager.PlayShapeEnterEffect();
+        }
     }
 
     private void OnScoreChanged(int newScore)
@@ -242,6 +248,11 @@ public class GameplayController : MonoBehaviour
             inputManager.SetInputEnabled(false);
         }
 
+        if (juiceManager != null)
+        {
+            juiceManager.PlayGameOverEffects();
+        }
+
         Invoke(nameof(ShowGameOverPopup), endGameDelay);
     }
 
@@ -274,6 +285,11 @@ public class GameplayController : MonoBehaviour
             if (inputManager != null)
             {
                 inputManager.SetInputEnabled(false);
+            }
+
+            if (juiceManager != null)
+            {
+                juiceManager.PlayVictoryEffects();
             }
 
             Invoke(nameof(ShowVictoryPopup), endGameDelay);
