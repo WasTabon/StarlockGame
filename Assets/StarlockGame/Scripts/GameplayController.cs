@@ -12,6 +12,7 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private MatchManager matchManager;
     [SerializeField] private ShapeSpawner shapeSpawner;
     [SerializeField] private JuiceManager juiceManager;
+    [SerializeField] private EndlessManager endlessManager;
 
     [Header("Rotation Presets (Fallback)")]
     [SerializeField] private RotationPreset slowPreset;
@@ -26,6 +27,7 @@ public class GameplayController : MonoBehaviour
 
     private bool isGameOver = false;
     private bool isVictory = false;
+    private bool isEndlessMode = false;
     private LevelConfig currentConfig;
 
     private void Start()
@@ -38,10 +40,20 @@ public class GameplayController : MonoBehaviour
         isGameOver = false;
         isVictory = false;
 
-        LoadLevelConfig();
-        SetupRotationForCurrentLevel();
-        SetupCircleContainer();
-        SetupShapeSpawner();
+        if (GameManager.Instance != null)
+        {
+            isEndlessMode = GameManager.Instance.CurrentMode == GameMode.Endless;
+        }
+
+        if (isEndlessMode)
+        {
+            InitializeEndlessMode();
+        }
+        else
+        {
+            InitializeLevelMode();
+        }
+
         SubscribeToEvents();
 
         if (inputManager != null)
@@ -52,6 +64,41 @@ public class GameplayController : MonoBehaviour
         if (gameplayUI != null)
         {
             gameplayUI.HideAllPopups();
+            gameplayUI.SetEndlessMode(isEndlessMode);
+        }
+    }
+
+    private void InitializeEndlessMode()
+    {
+        if (shapeSpawner != null)
+        {
+            shapeSpawner.SetSpawnOnStart(false);
+        }
+
+        if (endlessManager != null)
+        {
+            endlessManager.StartEndlessMode();
+        }
+
+        if (circleContainer != null)
+        {
+            circleContainer.SetMaxShapes(maxShapesInside);
+        }
+    }
+
+    private void InitializeLevelMode()
+    {
+        LoadLevelConfig();
+        SetupRotationForCurrentLevel();
+        SetupCircleContainer();
+        SetupShapeSpawner();
+    }
+
+    private void Update()
+    {
+        if (isEndlessMode && !isGameOver && endlessManager != null && gameplayUI != null)
+        {
+            gameplayUI.UpdateTime(endlessManager.GameTime);
         }
     }
 
@@ -268,7 +315,10 @@ public class GameplayController : MonoBehaviour
             outerZone.RemoveShapeOutside(shape2.gameObject);
         }
 
-        Invoke(nameof(CheckVictoryCondition), endGameDelay);
+        if (!isEndlessMode)
+        {
+            Invoke(nameof(CheckVictoryCondition), endGameDelay);
+        }
     }
 
     private void OnContainerFull()
@@ -288,17 +338,45 @@ public class GameplayController : MonoBehaviour
             inputManager.SetInputEnabled(false);
         }
 
+        if (endlessManager != null)
+        {
+            endlessManager.StopEndlessMode();
+        }
+
         if (juiceManager != null)
         {
             juiceManager.PlayGameOverEffects();
         }
 
+        if (isEndlessMode)
+        {
+            SubmitEndlessScore();
+        }
+
         Invoke(nameof(ShowGameOverPopup), endGameDelay);
+    }
+
+    private void SubmitEndlessScore()
+    {
+        if (HighscoreManager.Instance == null) return;
+        if (matchManager == null) return;
+        if (endlessManager == null) return;
+
+        int score = matchManager.CurrentScore;
+        float time = endlessManager.GameTime;
+
+        bool isNewHighscore = HighscoreManager.Instance.SubmitScore(score, time);
+
+        if (gameplayUI != null)
+        {
+            gameplayUI.SetNewHighscore(isNewHighscore);
+        }
     }
 
     private void OnAllShapesCleared()
     {
         if (isGameOver || isVictory) return;
+        if (isEndlessMode) return;
 
         CheckVictoryCondition();
     }
@@ -306,6 +384,7 @@ public class GameplayController : MonoBehaviour
     private void CheckVictoryCondition()
     {
         if (isGameOver || isVictory) return;
+        if (isEndlessMode) return;
 
         if (shapeSpawner == null) return;
 
@@ -362,7 +441,17 @@ public class GameplayController : MonoBehaviour
         if (gameplayUI == null) return;
 
         int score = matchManager != null ? matchManager.CurrentScore : 0;
-        gameplayUI.ShowGameOverPopup(score);
+        
+        if (isEndlessMode)
+        {
+            int highscore = HighscoreManager.Instance != null ? HighscoreManager.Instance.EndlessHighscore : 0;
+            float time = endlessManager != null ? endlessManager.GameTime : 0f;
+            gameplayUI.ShowEndlessGameOverPopup(score, highscore, time);
+        }
+        else
+        {
+            gameplayUI.ShowGameOverPopup(score);
+        }
     }
 
     private void OnRestartClicked()
@@ -425,6 +514,7 @@ public class GameplayController : MonoBehaviour
 
     public bool IsGameOver => isGameOver;
     public bool IsVictory => isVictory;
+    public bool IsEndlessMode => isEndlessMode;
 
     public CircleContainer GetCircleContainer() => circleContainer;
     public OuterZone GetOuterZone() => outerZone;

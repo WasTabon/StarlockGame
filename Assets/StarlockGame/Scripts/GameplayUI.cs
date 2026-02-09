@@ -9,6 +9,11 @@ public class GameplayUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private Button pauseButton;
 
+    [Header("Endless HUD")]
+    [SerializeField] private TextMeshProUGUI timeText;
+    [SerializeField] private TextMeshProUGUI highscoreText;
+    [SerializeField] private GameObject endlessHUD;
+
     [Header("Popups")]
     [SerializeField] private VictoryPopup victoryPopup;
     [SerializeField] private GameOverPopup gameOverPopup;
@@ -20,6 +25,9 @@ public class GameplayUI : MonoBehaviour
     public System.Action OnRestartClicked;
     public System.Action OnNextLevelClicked;
     public System.Action OnMenuClicked;
+
+    private bool isEndlessMode = false;
+    private bool isNewHighscore = false;
 
     private void Start()
     {
@@ -58,7 +66,8 @@ public class GameplayUI : MonoBehaviour
     {
         if (GameManager.Instance == null)
         {
-            Debug.LogWarning("GameManager not found!");
+            if (levelText != null) levelText.text = "LEVEL 1";
+            if (scoreText != null) scoreText.text = "0";
             return;
         }
 
@@ -94,6 +103,23 @@ public class GameplayUI : MonoBehaviour
         {
             scoreText.text = "0";
         }
+
+        UpdateHighscoreDisplay();
+    }
+
+    private void UpdateHighscoreDisplay()
+    {
+        if (highscoreText == null) return;
+
+        if (HighscoreManager.Instance != null)
+        {
+            int highscore = HighscoreManager.Instance.EndlessHighscore;
+            highscoreText.text = $"BEST: {highscore}";
+        }
+        else
+        {
+            highscoreText.text = "BEST: 0";
+        }
     }
 
     private void OnBackToMenuClicked()
@@ -105,12 +131,48 @@ public class GameplayUI : MonoBehaviour
     {
     }
 
+    public void SetEndlessMode(bool endless)
+    {
+        isEndlessMode = endless;
+
+        if (endlessHUD != null)
+        {
+            endlessHUD.SetActive(endless);
+        }
+
+        if (timeText != null)
+        {
+            timeText.gameObject.SetActive(endless);
+        }
+
+        if (highscoreText != null)
+        {
+            highscoreText.gameObject.SetActive(endless);
+        }
+
+        UpdateHighscoreDisplay();
+    }
+
     public void UpdateScore(int score)
     {
         if (scoreText != null)
         {
             scoreText.text = score.ToString();
         }
+    }
+
+    public void UpdateTime(float time)
+    {
+        if (timeText == null) return;
+
+        int minutes = Mathf.FloorToInt(time / 60f);
+        int seconds = Mathf.FloorToInt(time % 60f);
+        timeText.text = $"{minutes:00}:{seconds:00}";
+    }
+
+    public void SetNewHighscore(bool isNew)
+    {
+        isNewHighscore = isNew;
     }
 
     public void ShowVictoryPopup(int score, bool hasNextLevel)
@@ -134,6 +196,18 @@ public class GameplayUI : MonoBehaviour
         }
 
         gameOverPopup.Setup(score);
+        gameOverPopup.Show();
+    }
+
+    public void ShowEndlessGameOverPopup(int score, int highscore, float time)
+    {
+        if (gameOverPopup == null)
+        {
+            Debug.LogWarning("GameOverPopup not assigned!");
+            return;
+        }
+
+        gameOverPopup.SetupEndless(score, highscore, time, isNewHighscore);
         gameOverPopup.Show();
     }
 

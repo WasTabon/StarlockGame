@@ -122,6 +122,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &40696115
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 40696117}
+  - component: {fileID: 40696116}
+  m_Layer: 0
+  m_Name: HighscoreManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &40696116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40696115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1cd0522ea1e7614bb18ec327963e5ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &40696117
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40696115}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &61325438
 GameObject:
   m_ObjectHideFlags: 0
@@ -1175,6 +1219,65 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 371257481}
   m_CullTransparentMesh: 1
+--- !u!1 &375383709
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 375383711}
+  - component: {fileID: 375383710}
+  m_Layer: 0
+  m_Name: EndlessManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &375383710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 375383709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daae9fa2a8d22bc4999e75dfa18e532b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shapeSpawner: {fileID: 188860750}
+  rotationController: {fileID: 61325439}
+  matchManager: {fileID: 649180870}
+  initialSpawnInterval: 1
+  minSpawnInterval: 1
+  spawnIntervalDecreaseRate: 0.05
+  maxShapesOnScreen: 20
+  initialRotationSpeed: 30
+  maxRotationSpeed: 100
+  rotationSpeedIncreaseRate: 1
+  difficultyIncreaseInterval: 10
+  currentSpawnInterval: 0
+  currentRotationSpeed: 0
+  gameTime: 0
+  difficultyLevel: 0
+--- !u!4 &375383711
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 375383709}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &411376321
 GameObject:
   m_ObjectHideFlags: 0
@@ -4329,6 +4432,9 @@ MonoBehaviour:
   startScale: 0.8
   titleText: {fileID: 109395432}
   scoreText: {fileID: 1906439969}
+  highscoreText: {fileID: 0}
+  timeText: {fileID: 0}
+  newHighscoreText: {fileID: 0}
   restartButton: {fileID: 1620371263}
   menuButton: {fileID: 971626317}
 --- !u!1 &2022719706
@@ -4364,6 +4470,9 @@ MonoBehaviour:
   scoreText: {fileID: 1717520527}
   levelText: {fileID: 481514000}
   pauseButton: {fileID: 0}
+  timeText: {fileID: 0}
+  highscoreText: {fileID: 0}
+  endlessHUD: {fileID: 0}
   victoryPopup: {fileID: 1176526149}
   gameOverPopup: {fileID: 2012034799}
   modeText: {fileID: 2040958814}
@@ -4403,6 +4512,7 @@ MonoBehaviour:
   matchManager: {fileID: 649180870}
   shapeSpawner: {fileID: 188860750}
   juiceManager: {fileID: 119961548}
+  endlessManager: {fileID: 375383710}
   slowPreset: {fileID: 11400000, guid: 3bc612decc9195d439559b501f2015c2, type: 2}
   mediumPreset: {fileID: 11400000, guid: 1d3c0035be9af4e47a590d50987ba330, type: 2}
   fastPreset: {fileID: 11400000, guid: 4e38cdc14ac5f4b4d855947d1233eb82, type: 2}
@@ -4915,3 +5025,5 @@ SceneRoots:
   - {fileID: 606854849}
   - {fileID: 119961549}
   - {fileID: 1650982900}
+  - {fileID: 375383711}
+  - {fileID: 40696117}

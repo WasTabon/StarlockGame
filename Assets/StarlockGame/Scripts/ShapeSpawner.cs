@@ -175,16 +175,23 @@ public class ShapeSpawner : MonoBehaviour
 
     public int GetSpawnedCount()
     {
+        spawnedShapes.RemoveAll(s => s == null);
         return spawnedShapes.Count;
     }
 
     public List<Shape> GetSpawnedShapes()
     {
+        spawnedShapes.RemoveAll(s => s == null);
         return new List<Shape>(spawnedShapes);
     }
 
     public void SetPairsToSpawn(int pairs)
     {
         pairsToSpawn = pairs;
+    }
+
+    public void SetSpawnOnStart(bool spawn)
+    {
+        spawnOnStart = spawn;
     }
 }
