@@ -28,6 +28,7 @@ public class GameplayController : MonoBehaviour
     private bool isGameOver = false;
     private bool isVictory = false;
     private bool isEndlessMode = false;
+    private bool isPaused = false;
     private LevelConfig currentConfig;
 
     private void Start()
@@ -39,6 +40,7 @@ public class GameplayController : MonoBehaviour
     {
         isGameOver = false;
         isVictory = false;
+        isPaused = false;
 
         if (GameManager.Instance != null)
         {
@@ -96,9 +98,14 @@ public class GameplayController : MonoBehaviour
 
     private void Update()
     {
-        if (isEndlessMode && !isGameOver && endlessManager != null && gameplayUI != null)
+        if (isEndlessMode && !isGameOver && !isPaused && endlessManager != null && gameplayUI != null)
         {
             gameplayUI.UpdateTime(endlessManager.GameTime);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape) && !isGameOver && !isVictory)
+        {
+            TogglePause();
         }
     }
 
@@ -202,11 +209,19 @@ public class GameplayController : MonoBehaviour
 
             gameplayUI.OnMenuClicked -= OnMenuClicked;
             gameplayUI.OnMenuClicked += OnMenuClicked;
+
+            gameplayUI.OnPauseClicked -= OnPauseClicked;
+            gameplayUI.OnPauseClicked += OnPauseClicked;
+
+            gameplayUI.OnResumeClicked -= OnResumeClicked;
+            gameplayUI.OnResumeClicked += OnResumeClicked;
         }
     }
 
     private void OnDestroy()
     {
+        Time.timeScale = 1f;
+
         if (circleContainer != null)
         {
             circleContainer.OnContainerFull -= OnContainerFull;
@@ -233,6 +248,8 @@ public class GameplayController : MonoBehaviour
             gameplayUI.OnRestartClicked -= OnRestartClicked;
             gameplayUI.OnNextLevelClicked -= OnNextLevelClicked;
             gameplayUI.OnMenuClicked -= OnMenuClicked;
+            gameplayUI.OnPauseClicked -= OnPauseClicked;
+            gameplayUI.OnResumeClicked -= OnResumeClicked;
         }
     }
 
@@ -270,7 +287,7 @@ public class GameplayController : MonoBehaviour
 
     private void OnShapeTapped(Shape shape)
     {
-        if (isGameOver || isVictory) return;
+        if (isGameOver || isVictory || isPaused) return;
 
         shape.OnEnteredCircle -= OnShapeEnteredCircle;
         shape.OnEnteredCircle += OnShapeEnteredCircle;
@@ -358,14 +375,16 @@ public class GameplayController : MonoBehaviour
 
     private void SubmitEndlessScore()
     {
-        if (HighscoreManager.Instance == null) return;
         if (matchManager == null) return;
-        if (endlessManager == null) return;
 
         int score = matchManager.CurrentScore;
-        float time = endlessManager.GameTime;
+        float time = endlessManager != null ? endlessManager.GameTime : 0f;
 
-        bool isNewHighscore = HighscoreManager.Instance.SubmitScore(score, time);
+        bool isNewHighscore = false;
+        if (HighscoreManager.Instance != null)
+        {
+            isNewHighscore = HighscoreManager.Instance.SubmitScore(score, time);
+        }
 
         if (gameplayUI != null)
         {
@@ -454,15 +473,79 @@ public class GameplayController : MonoBehaviour
         }
     }
 
+    private void TogglePause()
+    {
+        if (isPaused)
+        {
+            ResumeGame();
+        }
+        else
+        {
+            PauseGame();
+        }
+    }
+
+    private void OnPauseClicked()
+    {
+        PauseGame();
+    }
+
+    private void OnResumeClicked()
+    {
+        ResumeGame();
+    }
+
+    private void PauseGame()
+    {
+        if (isPaused || isGameOver || isVictory) return;
+
+        isPaused = true;
+        Time.timeScale = 0f;
+
+        if (inputManager != null)
+        {
+            inputManager.SetInputEnabled(false);
+        }
+
+        if (gameplayUI != null)
+        {
+            gameplayUI.ShowPausePopup();
+        }
+
+        Debug.Log("Game Paused");
+    }
+
+    private void ResumeGame()
+    {
+        if (!isPaused) return;
+
+        isPaused = false;
+        Time.timeScale = 1f;
+
+        if (inputManager != null)
+        {
+            inputManager.SetInputEnabled(true);
+        }
+
+        if (gameplayUI != null)
+        {
+            gameplayUI.HidePausePopup();
+        }
+
+        Debug.Log("Game Resumed");
+    }
+
     private void OnRestartClicked()
     {
         Debug.Log("Restart clicked");
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void OnNextLevelClicked()
     {
         Debug.Log("Next Level clicked");
+        Time.timeScale = 1f;
 
         if (GameManager.Instance != null && GameManager.Instance.HasNextLevel())
         {
@@ -477,6 +560,7 @@ public class GameplayController : MonoBehaviour
     private void OnMenuClicked()
     {
         Debug.Log("Menu clicked");
+        Time.timeScale = 1f;
 
         if (GameManager.Instance != null)
         {
@@ -515,6 +599,7 @@ public class GameplayController : MonoBehaviour
     public bool IsGameOver => isGameOver;
     public bool IsVictory => isVictory;
     public bool IsEndlessMode => isEndlessMode;
+    public bool IsPaused => isPaused;
 
     public CircleContainer GetCircleContainer() => circleContainer;
     public OuterZone GetOuterZone() => outerZone;

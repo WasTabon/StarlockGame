@@ -12,6 +12,7 @@ public class EndlessManager : MonoBehaviour
     [SerializeField] private float minSpawnInterval = 1f;
     [SerializeField] private float spawnIntervalDecreaseRate = 0.05f;
     [SerializeField] private int maxShapesOnScreen = 20;
+    [SerializeField] private int initialShapesCount = 6;
 
     [Header("Difficulty Settings")]
     [SerializeField] private float initialRotationSpeed = 30f;
@@ -55,14 +56,14 @@ public class EndlessManager : MonoBehaviour
             rotationController.SetSpeed(currentRotationSpeed);
         }
 
-        SpawnInitialPairs();
+        SpawnInitialShapes();
     }
 
-    private void SpawnInitialPairs()
+    private void SpawnInitialShapes()
     {
         if (shapeSpawner == null) return;
 
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < initialShapesCount; i++)
         {
             shapeSpawner.SpawnRandomShape();
         }
@@ -78,7 +79,7 @@ public class EndlessManager : MonoBehaviour
 
         if (spawnTimer >= currentSpawnInterval)
         {
-            TrySpawnPair();
+            TrySpawnShape();
             spawnTimer = 0f;
         }
 
@@ -89,7 +90,7 @@ public class EndlessManager : MonoBehaviour
         }
     }
 
-    private void TrySpawnPair()
+    private void TrySpawnShape()
     {
         if (shapeSpawner == null) return;
 

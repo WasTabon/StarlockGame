@@ -22,13 +22,37 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Toggle soundToggle;
     [SerializeField] private Button resetProgressButton;
 
+    [Header("Tutorial")]
+    [SerializeField] private TutorialManager tutorialManager;
+
     private LevelButton[] levelButtons;
 
     private void Start()
     {
         SetupButtons();
         SetupLevelButtons();
-        ShowMainPanel();
+        
+        CheckTutorial();
+    }
+
+    private void CheckTutorial()
+    {
+        if (tutorialManager != null && tutorialManager.ShouldShowTutorial())
+        {
+            if (mainPanel != null)
+            {
+                mainPanel.HideInstant();
+            }
+
+            tutorialManager.StartTutorial(() =>
+            {
+                ShowMainPanel();
+            });
+        }
+        else
+        {
+            ShowMainPanel();
+        }
     }
 
     private void SetupButtons()

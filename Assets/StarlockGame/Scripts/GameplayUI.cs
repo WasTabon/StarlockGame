@@ -17,6 +17,7 @@ public class GameplayUI : MonoBehaviour
     [Header("Popups")]
     [SerializeField] private VictoryPopup victoryPopup;
     [SerializeField] private GameOverPopup gameOverPopup;
+    [SerializeField] private PausePopup pausePopup;
 
     [Header("Debug")]
     [SerializeField] private TextMeshProUGUI modeText;
@@ -25,6 +26,8 @@ public class GameplayUI : MonoBehaviour
     public System.Action OnRestartClicked;
     public System.Action OnNextLevelClicked;
     public System.Action OnMenuClicked;
+    public System.Action OnPauseClicked;
+    public System.Action OnResumeClicked;
 
     private bool isEndlessMode = false;
     private bool isNewHighscore = false;
@@ -40,16 +43,22 @@ public class GameplayUI : MonoBehaviour
     {
         if (backToMenuButton != null)
         {
+            backToMenuButton.onClick.RemoveAllListeners();
             backToMenuButton.onClick.AddListener(OnBackToMenuClicked);
         }
 
         if (pauseButton != null)
         {
-            pauseButton.onClick.AddListener(OnPauseClicked);
+            pauseButton.onClick.RemoveAllListeners();
+            pauseButton.onClick.AddListener(OnPauseButtonClicked);
         }
 
         if (victoryPopup != null)
         {
+            victoryPopup.OnNextLevelClicked = null;
+            victoryPopup.OnRestartClicked = null;
+            victoryPopup.OnMenuClicked = null;
+            
             victoryPopup.OnNextLevelClicked += () => OnNextLevelClicked?.Invoke();
             victoryPopup.OnRestartClicked += () => OnRestartClicked?.Invoke();
             victoryPopup.OnMenuClicked += () => OnMenuClicked?.Invoke();
@@ -57,9 +66,29 @@ public class GameplayUI : MonoBehaviour
 
         if (gameOverPopup != null)
         {
+            gameOverPopup.OnRestartClicked = null;
+            gameOverPopup.OnMenuClicked = null;
+            
             gameOverPopup.OnRestartClicked += () => OnRestartClicked?.Invoke();
             gameOverPopup.OnMenuClicked += () => OnMenuClicked?.Invoke();
         }
+
+        if (pausePopup != null)
+        {
+            pausePopup.OnResumeClicked = null;
+            pausePopup.OnRestartClicked = null;
+            pausePopup.OnMenuClicked = null;
+            
+            pausePopup.OnResumeClicked += () => OnResumeClicked?.Invoke();
+            pausePopup.OnRestartClicked += () => OnRestartClicked?.Invoke();
+            pausePopup.OnMenuClicked += () => OnMenuClicked?.Invoke();
+        }
+    }
+
+    private void OnPauseButtonClicked()
+    {
+        Debug.Log("Pause button clicked");
+        OnPauseClicked?.Invoke();
     }
 
     private void UpdateModeDisplay()
@@ -125,10 +154,6 @@ public class GameplayUI : MonoBehaviour
     private void OnBackToMenuClicked()
     {
         OnMenuClicked?.Invoke();
-    }
-
-    private void OnPauseClicked()
-    {
     }
 
     public void SetEndlessMode(bool endless)
@@ -211,6 +236,25 @@ public class GameplayUI : MonoBehaviour
         gameOverPopup.Show();
     }
 
+    public void ShowPausePopup()
+    {
+        if (pausePopup == null)
+        {
+            Debug.LogWarning("PausePopup not assigned!");
+            return;
+        }
+
+        pausePopup.ShowInstant();
+    }
+
+    public void HidePausePopup()
+    {
+        if (pausePopup != null)
+        {
+            pausePopup.HideInstant();
+        }
+    }
+
     public void HideAllPopups()
     {
         if (victoryPopup != null)
@@ -221,6 +265,11 @@ public class GameplayUI : MonoBehaviour
         if (gameOverPopup != null)
         {
             gameOverPopup.HideInstant();
+        }
+
+        if (pausePopup != null)
+        {
+            pausePopup.HideInstant();
         }
     }
 
