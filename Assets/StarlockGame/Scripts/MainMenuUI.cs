@@ -20,21 +20,33 @@ public class MainMenuUI : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private Button settingsBackButton;
     [SerializeField] private Toggle soundToggle;
+    [SerializeField] private Button resetProgressButton;
+
+    private LevelButton[] levelButtons;
 
     private void Start()
     {
         SetupButtons();
+        SetupLevelButtons();
         ShowMainPanel();
     }
 
     private void SetupButtons()
     {
-        levelsButton.onClick.AddListener(OnLevelsClicked);
-        endlessButton.onClick.AddListener(OnEndlessClicked);
-        settingsButton.onClick.AddListener(OnSettingsClicked);
+        if (levelsButton != null)
+            levelsButton.onClick.AddListener(OnLevelsClicked);
+        
+        if (endlessButton != null)
+            endlessButton.onClick.AddListener(OnEndlessClicked);
+        
+        if (settingsButton != null)
+            settingsButton.onClick.AddListener(OnSettingsClicked);
 
-        levelSelectBackButton.onClick.AddListener(OnLevelSelectBackClicked);
-        settingsBackButton.onClick.AddListener(OnSettingsBackClicked);
+        if (levelSelectBackButton != null)
+            levelSelectBackButton.onClick.AddListener(OnLevelSelectBackClicked);
+        
+        if (settingsBackButton != null)
+            settingsBackButton.onClick.AddListener(OnSettingsBackClicked);
 
         if (soundToggle != null && GameManager.Instance != null)
         {
@@ -42,68 +54,124 @@ public class MainMenuUI : MonoBehaviour
             soundToggle.onValueChanged.AddListener(OnSoundToggleChanged);
         }
 
-        SetupLevelButtons();
+        if (resetProgressButton != null)
+        {
+            resetProgressButton.onClick.AddListener(OnResetProgressClicked);
+        }
     }
 
     private void SetupLevelButtons()
     {
         if (levelButtonsContainer == null) return;
 
-        Button[] levelButtons = levelButtonsContainer.GetComponentsInChildren<Button>(true);
+        levelButtons = levelButtonsContainer.GetComponentsInChildren<LevelButton>(true);
+
         for (int i = 0; i < levelButtons.Length; i++)
         {
             int levelIndex = i + 1;
-            levelButtons[i].onClick.AddListener(() => OnLevelSelected(levelIndex));
+            levelButtons[i].Setup(levelIndex);
+            levelButtons[i].OnLevelSelected += OnLevelSelected;
+        }
+
+        Button[] oldButtons = levelButtonsContainer.GetComponentsInChildren<Button>(true);
+        foreach (Button btn in oldButtons)
+        {
+            if (btn.GetComponent<LevelButton>() == null)
+            {
+                int siblingIndex = btn.transform.GetSiblingIndex();
+                int levelIndex = siblingIndex + 1;
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(() => OnLevelSelected(levelIndex));
+            }
+        }
+    }
+
+    private void RefreshLevelButtons()
+    {
+        if (levelButtons == null) return;
+
+        foreach (LevelButton levelButton in levelButtons)
+        {
+            if (levelButton != null)
+            {
+                levelButton.UpdateVisuals();
+            }
         }
     }
 
     private void ShowMainPanel()
     {
-        mainPanel.ShowInstant();
-        levelSelectPanel.HideInstant();
-        settingsPanel.HideInstant();
+        if (mainPanel != null) mainPanel.ShowInstant();
+        if (levelSelectPanel != null) levelSelectPanel.HideInstant();
+        if (settingsPanel != null) settingsPanel.HideInstant();
     }
 
     private void OnLevelsClicked()
     {
-        mainPanel.Hide(() =>
+        RefreshLevelButtons();
+
+        if (mainPanel != null)
         {
-            levelSelectPanel.Show();
-        });
+            mainPanel.Hide(() =>
+            {
+                if (levelSelectPanel != null)
+                    levelSelectPanel.Show();
+            });
+        }
     }
 
     private void OnEndlessClicked()
     {
-        GameManager.Instance.StartEndlessMode();
+        if (GameManager.Instance != null)
+            GameManager.Instance.StartEndlessMode();
     }
 
     private void OnSettingsClicked()
     {
-        mainPanel.Hide(() =>
+        if (mainPanel != null)
         {
-            settingsPanel.Show();
-        });
+            mainPanel.Hide(() =>
+            {
+                if (settingsPanel != null)
+                    settingsPanel.Show();
+            });
+        }
     }
 
     private void OnLevelSelectBackClicked()
     {
-        levelSelectPanel.Hide(() =>
+        if (levelSelectPanel != null)
         {
-            mainPanel.Show();
-        });
+            levelSelectPanel.Hide(() =>
+            {
+                if (mainPanel != null)
+                    mainPanel.Show();
+            });
+        }
     }
 
     private void OnSettingsBackClicked()
     {
-        settingsPanel.Hide(() =>
+        if (settingsPanel != null)
         {
-            mainPanel.Show();
-        });
+            settingsPanel.Hide(() =>
+            {
+                if (mainPanel != null)
+                    mainPanel.Show();
+            });
+        }
     }
 
     private void OnLevelSelected(int levelIndex)
     {
-        GameManager.Instance.StartLevelMode(levelIndex);
+        if (ProgressManager.Instance != null && !ProgressManager.Instance.IsLevelUnlocked(levelIndex))
+        {
+            Debug.Log($"Level {levelIndex} is locked!");
+            return;
+        }
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.StartLevelMode(levelIndex);
     }
 
     private void OnSoundToggleChanged(bool isOn)
@@ -114,25 +182,44 @@ public class MainMenuUI : MonoBehaviour
         }
     }
 
+    private void OnResetProgressClicked()
+    {
+        if (ProgressManager.Instance != null)
+        {
+            ProgressManager.Instance.ResetAllProgress();
+            RefreshLevelButtons();
+        }
+    }
+
     private void OnDestroy()
     {
-        levelsButton.onClick.RemoveAllListeners();
-        endlessButton.onClick.RemoveAllListeners();
-        settingsButton.onClick.RemoveAllListeners();
-        levelSelectBackButton.onClick.RemoveAllListeners();
-        settingsBackButton.onClick.RemoveAllListeners();
+        if (levelsButton != null)
+            levelsButton.onClick.RemoveAllListeners();
+        
+        if (endlessButton != null)
+            endlessButton.onClick.RemoveAllListeners();
+        
+        if (settingsButton != null)
+            settingsButton.onClick.RemoveAllListeners();
+        
+        if (levelSelectBackButton != null)
+            levelSelectBackButton.onClick.RemoveAllListeners();
+        
+        if (settingsBackButton != null)
+            settingsBackButton.onClick.RemoveAllListeners();
 
         if (soundToggle != null)
-        {
             soundToggle.onValueChanged.RemoveAllListeners();
-        }
 
-        if (levelButtonsContainer != null)
+        if (resetProgressButton != null)
+            resetProgressButton.onClick.RemoveAllListeners();
+
+        if (levelButtons != null)
         {
-            Button[] levelButtons = levelButtonsContainer.GetComponentsInChildren<Button>(true);
-            foreach (var btn in levelButtons)
+            foreach (LevelButton levelButton in levelButtons)
             {
-                btn.onClick.RemoveAllListeners();
+                if (levelButton != null)
+                    levelButton.OnLevelSelected -= OnLevelSelected;
             }
         }
     }

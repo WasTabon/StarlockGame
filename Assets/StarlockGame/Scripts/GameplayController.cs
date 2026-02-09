@@ -13,7 +13,7 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private ShapeSpawner shapeSpawner;
     [SerializeField] private JuiceManager juiceManager;
 
-    [Header("Rotation Presets")]
+    [Header("Rotation Presets (Fallback)")]
     [SerializeField] private RotationPreset slowPreset;
     [SerializeField] private RotationPreset mediumPreset;
     [SerializeField] private RotationPreset fastPreset;
@@ -26,6 +26,7 @@ public class GameplayController : MonoBehaviour
 
     private bool isGameOver = false;
     private bool isVictory = false;
+    private LevelConfig currentConfig;
 
     private void Start()
     {
@@ -37,8 +38,10 @@ public class GameplayController : MonoBehaviour
         isGameOver = false;
         isVictory = false;
 
+        LoadLevelConfig();
         SetupRotationForCurrentLevel();
         SetupCircleContainer();
+        SetupShapeSpawner();
         SubscribeToEvents();
 
         if (inputManager != null)
@@ -52,6 +55,20 @@ public class GameplayController : MonoBehaviour
         }
     }
 
+    private void LoadLevelConfig()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.CurrentLevelConfig != null)
+        {
+            currentConfig = GameManager.Instance.CurrentLevelConfig;
+        }
+        else
+        {
+            currentConfig = LevelConfig.GetConfig(GetCurrentLevel());
+        }
+
+        maxShapesInside = currentConfig.maxShapesInside;
+    }
+
     private void SetupRotationForCurrentLevel()
     {
         if (rotationController == null)
@@ -60,8 +77,17 @@ public class GameplayController : MonoBehaviour
             return;
         }
 
-        RotationPreset preset = GetPresetForLevel(GetCurrentLevel());
-        rotationController.SetPreset(preset);
+        if (currentConfig != null)
+        {
+            rotationController.SetSpeed(currentConfig.rotationSpeed);
+            rotationController.SetDirection(!currentConfig.reverseRotation);
+        }
+        else
+        {
+            RotationPreset preset = GetPresetForLevel(GetCurrentLevel());
+            rotationController.SetPreset(preset);
+        }
+
         rotationController.Resume();
     }
 
@@ -74,6 +100,20 @@ public class GameplayController : MonoBehaviour
         }
 
         circleContainer.SetMaxShapes(maxShapesInside);
+    }
+
+    private void SetupShapeSpawner()
+    {
+        if (shapeSpawner == null)
+        {
+            Debug.LogWarning("GameplayController: ShapeSpawner not assigned!");
+            return;
+        }
+
+        if (currentConfig != null)
+        {
+            shapeSpawner.SetPairsToSpawn(currentConfig.pairsToSpawn);
+        }
     }
 
     private void SubscribeToEvents()
@@ -292,6 +332,12 @@ public class GameplayController : MonoBehaviour
                 juiceManager.PlayVictoryEffects();
             }
 
+            int score = matchManager != null ? matchManager.CurrentScore : 0;
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.OnLevelCompleted(score);
+            }
+
             Invoke(nameof(ShowVictoryPopup), endGameDelay);
         }
     }
@@ -301,8 +347,12 @@ public class GameplayController : MonoBehaviour
         if (gameplayUI == null) return;
 
         int score = matchManager != null ? matchManager.CurrentScore : 0;
-        bool hasNextLevel = GetCurrentLevel() < maxLevel && 
-                           (GameManager.Instance == null || GameManager.Instance.CurrentMode == GameMode.Levels);
+        bool hasNextLevel = false;
+
+        if (GameManager.Instance != null)
+        {
+            hasNextLevel = GameManager.Instance.HasNextLevel();
+        }
 
         gameplayUI.ShowVictoryPopup(score, hasNextLevel);
     }
@@ -325,14 +375,11 @@ public class GameplayController : MonoBehaviour
     {
         Debug.Log("Next Level clicked");
 
-        if (GameManager.Instance != null)
+        if (GameManager.Instance != null && GameManager.Instance.HasNextLevel())
         {
             int nextLevel = GameManager.Instance.SelectedLevel + 1;
-            if (nextLevel <= maxLevel)
-            {
-                GameManager.Instance.StartLevelMode(nextLevel);
-                return;
-            }
+            GameManager.Instance.StartLevelMode(nextLevel);
+            return;
         }
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

@@ -818,6 +818,7 @@ GameObject:
   - component: {fileID: 246912593}
   - component: {fileID: 246912592}
   - component: {fileID: 246912591}
+  - component: {fileID: 246912595}
   m_Layer: 0
   m_Name: Level_10
   m_TagString: Untagged
@@ -944,6 +945,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 246912589}
   m_CullTransparentMesh: 1
+--- !u!114 &246912595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246912589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66a65003ebfeac45987f499e1142324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 246912592}
+  levelNumberText: {fileID: 695601474}
+  lockedOverlay: {fileID: 0}
+  completedCheckmark: {fileID: 0}
+  starsContainer: {fileID: 0}
+  starImages: []
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.7}
+  completedColor: {r: 0.7, g: 1, b: 0.7, a: 1}
+  starActiveColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  starInactiveColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &273464396
 GameObject:
   m_ObjectHideFlags: 0
@@ -957,6 +981,7 @@ GameObject:
   - component: {fileID: 273464400}
   - component: {fileID: 273464399}
   - component: {fileID: 273464398}
+  - component: {fileID: 273464402}
   m_Layer: 0
   m_Name: Level_9
   m_TagString: Untagged
@@ -1083,6 +1108,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 273464396}
   m_CullTransparentMesh: 1
+--- !u!114 &273464402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 273464396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66a65003ebfeac45987f499e1142324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 273464399}
+  levelNumberText: {fileID: 1985329001}
+  lockedOverlay: {fileID: 0}
+  completedCheckmark: {fileID: 0}
+  starsContainer: {fileID: 0}
+  starImages: []
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.7}
+  completedColor: {r: 0.7, g: 1, b: 0.7, a: 1}
+  starActiveColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  starInactiveColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &277063957
 GameObject:
   m_ObjectHideFlags: 0
@@ -1458,6 +1506,50 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &341852708
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 341852710}
+  - component: {fileID: 341852709}
+  m_Layer: 0
+  m_Name: ProgressManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &341852709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 341852708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9dc5c8752fb4ea45adeb5d2241c83dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &341852710
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 341852708}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &355498380
 GameObject:
   m_ObjectHideFlags: 0
@@ -1471,6 +1563,7 @@ GameObject:
   - component: {fileID: 355498384}
   - component: {fileID: 355498383}
   - component: {fileID: 355498382}
+  - component: {fileID: 355498386}
   m_Layer: 0
   m_Name: Level_7
   m_TagString: Untagged
@@ -1597,6 +1690,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 355498380}
   m_CullTransparentMesh: 1
+--- !u!114 &355498386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355498380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66a65003ebfeac45987f499e1142324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 355498383}
+  levelNumberText: {fileID: 1617626899}
+  lockedOverlay: {fileID: 0}
+  completedCheckmark: {fileID: 0}
+  starsContainer: {fileID: 0}
+  starImages: []
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.7}
+  completedColor: {r: 0.7, g: 1, b: 0.7, a: 1}
+  starActiveColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  starInactiveColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &417208486
 GameObject:
   m_ObjectHideFlags: 0
@@ -1610,6 +1726,7 @@ GameObject:
   - component: {fileID: 417208490}
   - component: {fileID: 417208489}
   - component: {fileID: 417208488}
+  - component: {fileID: 417208492}
   m_Layer: 0
   m_Name: Level_6
   m_TagString: Untagged
@@ -1736,6 +1853,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 417208486}
   m_CullTransparentMesh: 1
+--- !u!114 &417208492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417208486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66a65003ebfeac45987f499e1142324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 417208489}
+  levelNumberText: {fileID: 1346642399}
+  lockedOverlay: {fileID: 0}
+  completedCheckmark: {fileID: 0}
+  starsContainer: {fileID: 0}
+  starImages: []
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.7}
+  completedColor: {r: 0.7, g: 1, b: 0.7, a: 1}
+  starActiveColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  starInactiveColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &463167323
 GameObject:
   m_ObjectHideFlags: 0
@@ -2002,6 +2142,7 @@ GameObject:
   - component: {fileID: 527014321}
   - component: {fileID: 527014320}
   - component: {fileID: 527014319}
+  - component: {fileID: 527014323}
   m_Layer: 0
   m_Name: Level_2
   m_TagString: Untagged
@@ -2128,6 +2269,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 527014317}
   m_CullTransparentMesh: 1
+--- !u!114 &527014323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527014317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66a65003ebfeac45987f499e1142324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 527014320}
+  levelNumberText: {fileID: 204320583}
+  lockedOverlay: {fileID: 0}
+  completedCheckmark: {fileID: 0}
+  starsContainer: {fileID: 0}
+  starImages: []
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.7}
+  completedColor: {r: 0.7, g: 1, b: 0.7, a: 1}
+  starActiveColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  starInactiveColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &535765531
 GameObject:
   m_ObjectHideFlags: 0
@@ -3169,6 +3333,7 @@ GameObject:
   - component: {fileID: 798464033}
   - component: {fileID: 798464032}
   - component: {fileID: 798464031}
+  - component: {fileID: 798464035}
   m_Layer: 0
   m_Name: Level_4
   m_TagString: Untagged
@@ -3295,6 +3460,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 798464029}
   m_CullTransparentMesh: 1
+--- !u!114 &798464035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 798464029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66a65003ebfeac45987f499e1142324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 798464032}
+  levelNumberText: {fileID: 1197777793}
+  lockedOverlay: {fileID: 0}
+  completedCheckmark: {fileID: 0}
+  starsContainer: {fileID: 0}
+  starImages: []
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.7}
+  completedColor: {r: 0.7, g: 1, b: 0.7, a: 1}
+  starActiveColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  starInactiveColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &842428304
 GameObject:
   m_ObjectHideFlags: 0
@@ -3576,6 +3764,7 @@ GameObject:
   - component: {fileID: 912205476}
   - component: {fileID: 912205475}
   - component: {fileID: 912205474}
+  - component: {fileID: 912205478}
   m_Layer: 0
   m_Name: Level_5
   m_TagString: Untagged
@@ -3702,6 +3891,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 912205472}
   m_CullTransparentMesh: 1
+--- !u!114 &912205478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 912205472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66a65003ebfeac45987f499e1142324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 912205475}
+  levelNumberText: {fileID: 548783909}
+  lockedOverlay: {fileID: 0}
+  completedCheckmark: {fileID: 0}
+  starsContainer: {fileID: 0}
+  starImages: []
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.7}
+  completedColor: {r: 0.7, g: 1, b: 0.7, a: 1}
+  starActiveColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  starInactiveColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &955035689
 GameObject:
   m_ObjectHideFlags: 0
@@ -3898,6 +4110,7 @@ GameObject:
   - component: {fileID: 996045206}
   - component: {fileID: 996045205}
   - component: {fileID: 996045204}
+  - component: {fileID: 996045208}
   m_Layer: 0
   m_Name: Level_8
   m_TagString: Untagged
@@ -4024,6 +4237,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 996045202}
   m_CullTransparentMesh: 1
+--- !u!114 &996045208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 996045202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66a65003ebfeac45987f499e1142324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 996045205}
+  levelNumberText: {fileID: 157915918}
+  lockedOverlay: {fileID: 0}
+  completedCheckmark: {fileID: 0}
+  starsContainer: {fileID: 0}
+  starImages: []
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.7}
+  completedColor: {r: 0.7, g: 1, b: 0.7, a: 1}
+  starActiveColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  starInactiveColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &1069170525
 GameObject:
   m_ObjectHideFlags: 0
@@ -5510,6 +5746,7 @@ MonoBehaviour:
   levelButtonsContainer: {fileID: 467296132}
   settingsBackButton: {fileID: 315779137}
   soundToggle: {fileID: 535765532}
+  resetProgressButton: {fileID: 0}
 --- !u!4 &1692479552
 Transform:
   m_ObjectHideFlags: 0
@@ -5538,6 +5775,7 @@ GameObject:
   - component: {fileID: 1848678059}
   - component: {fileID: 1848678058}
   - component: {fileID: 1848678057}
+  - component: {fileID: 1848678061}
   m_Layer: 0
   m_Name: Level_3
   m_TagString: Untagged
@@ -5664,6 +5902,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1848678055}
   m_CullTransparentMesh: 1
+--- !u!114 &1848678061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848678055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66a65003ebfeac45987f499e1142324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 1848678058}
+  levelNumberText: {fileID: 563469845}
+  lockedOverlay: {fileID: 0}
+  completedCheckmark: {fileID: 0}
+  starsContainer: {fileID: 0}
+  starImages: []
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.7}
+  completedColor: {r: 0.7, g: 1, b: 0.7, a: 1}
+  starActiveColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  starInactiveColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &1869088263
 GameObject:
   m_ObjectHideFlags: 0
@@ -6448,6 +6709,7 @@ GameObject:
   - component: {fileID: 2053931024}
   - component: {fileID: 2053931023}
   - component: {fileID: 2053931022}
+  - component: {fileID: 2053931026}
   m_Layer: 0
   m_Name: Level_1
   m_TagString: Untagged
@@ -6574,6 +6836,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2053931020}
   m_CullTransparentMesh: 1
+--- !u!114 &2053931026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053931020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66a65003ebfeac45987f499e1142324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 2053931023}
+  levelNumberText: {fileID: 277063959}
+  lockedOverlay: {fileID: 0}
+  completedCheckmark: {fileID: 0}
+  starsContainer: {fileID: 0}
+  starImages: []
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.7}
+  completedColor: {r: 0.7, g: 1, b: 0.7, a: 1}
+  starActiveColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  starInactiveColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &2096954860
 GameObject:
   m_ObjectHideFlags: 0
@@ -6718,3 +7003,4 @@ SceneRoots:
   - {fileID: 1219303845}
   - {fileID: 1692479552}
   - {fileID: 1101750868}
+  - {fileID: 341852710}
