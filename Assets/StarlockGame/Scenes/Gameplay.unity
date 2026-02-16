@@ -2095,11 +2095,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sfxSource: {fileID: 0}
-  tapSound: {fileID: 0}
-  matchSound: {fileID: 0}
-  victorySound: {fileID: 0}
-  gameOverSound: {fileID: 0}
-  shapeEnterSound: {fileID: 0}
+  tapSound: {fileID: 8300000, guid: 3ac0a5e2ef5df1a428ba7a364f6d4e80, type: 3}
+  matchSound: {fileID: 8300000, guid: e1ac6adde1b591f4fb1bd87b480f22f6, type: 3}
+  victorySound: {fileID: 8300000, guid: bccab7a3cc3aed74498a48e91a475666, type: 3}
+  gameOverSound: {fileID: 8300000, guid: 88711d226599fc5478e05e8924485fde, type: 3}
+  shapeEnterSound: {fileID: 8300000, guid: 9701181c53efe694bb554677ed6798a1, type: 3}
   sfxVolume: 1
   generateSounds: 1
 --- !u!4 &606854849
