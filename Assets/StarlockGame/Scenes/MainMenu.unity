@@ -6983,7 +6983,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: STARLOCK
+  m_text: Colowitta
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f3c5ab41291dead4fa969bff76cd8e57, type: 2}
   m_sharedMaterial: {fileID: -6162701254276869125, guid: f3c5ab41291dead4fa969bff76cd8e57, type: 2}
