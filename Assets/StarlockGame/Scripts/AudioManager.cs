@@ -4,11 +4,9 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    [Header("Audio Sources")]
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioSource musicSource;
 
-    [Header("UI Sounds")]
     [SerializeField] private AudioClip buttonClickSound;
     [SerializeField] private AudioClip buttonHoverSound;
     [SerializeField] private AudioClip panelOpenSound;
@@ -38,6 +36,27 @@ public class AudioManager : MonoBehaviour
             musicSource.playOnAwake = false;
             musicSource.loop = true;
         }
+
+        LoadSounds();
+    }
+
+    private void LoadSounds()
+    {
+        if (AddressableAssetService.Instance == null) return;
+
+        AudioClip loaded;
+
+        loaded = AddressableAssetService.Instance.GetAudioClip("Audio/UI/button_click");
+        if (loaded != null) buttonClickSound = loaded;
+
+        loaded = AddressableAssetService.Instance.GetAudioClip("Audio/UI/button_hover");
+        if (loaded != null) buttonHoverSound = loaded;
+
+        loaded = AddressableAssetService.Instance.GetAudioClip("Audio/UI/panel_open");
+        if (loaded != null) panelOpenSound = loaded;
+
+        loaded = AddressableAssetService.Instance.GetAudioClip("Audio/UI/panel_close");
+        if (loaded != null) panelCloseSound = loaded;
     }
 
     public void PlayButtonClick()

@@ -4,17 +4,14 @@ public class GameAudio : MonoBehaviour
 {
     public static GameAudio Instance { get; private set; }
 
-    [Header("Audio Sources")]
     [SerializeField] private AudioSource sfxSource;
 
-    [Header("Sound Clips")]
     [SerializeField] private AudioClip tapSound;
     [SerializeField] private AudioClip matchSound;
     [SerializeField] private AudioClip victorySound;
     [SerializeField] private AudioClip gameOverSound;
     [SerializeField] private AudioClip shapeEnterSound;
 
-    [Header("Settings")]
     [SerializeField] [Range(0f, 1f)] private float sfxVolume = 1f;
     [SerializeField] private bool generateSounds = true;
 
@@ -28,11 +25,7 @@ public class GameAudio : MonoBehaviour
         Instance = this;
 
         EnsureAudioSource();
-
-        if (generateSounds)
-        {
-            GenerateSounds();
-        }
+        LoadSounds();
     }
 
     private void EnsureAudioSource()
@@ -44,20 +37,48 @@ public class GameAudio : MonoBehaviour
         }
     }
 
-    private void GenerateSounds()
+    private void LoadSounds()
+    {
+        if (AddressableAssetService.Instance != null)
+        {
+            AudioClip loaded;
+
+            loaded = AddressableAssetService.Instance.GetAudioClip("Audio/SFX/tap");
+            if (loaded != null) tapSound = loaded;
+
+            loaded = AddressableAssetService.Instance.GetAudioClip("Audio/SFX/match");
+            if (loaded != null) matchSound = loaded;
+
+            loaded = AddressableAssetService.Instance.GetAudioClip("Audio/SFX/victory");
+            if (loaded != null) victorySound = loaded;
+
+            loaded = AddressableAssetService.Instance.GetAudioClip("Audio/SFX/gameover");
+            if (loaded != null) gameOverSound = loaded;
+
+            loaded = AddressableAssetService.Instance.GetAudioClip("Audio/SFX/shapeenter");
+            if (loaded != null) shapeEnterSound = loaded;
+        }
+
+        if (generateSounds)
+        {
+            GenerateMissingSounds();
+        }
+    }
+
+    private void GenerateMissingSounds()
     {
         if (tapSound == null)
             tapSound = GenerateBeep(440f, 0.05f, 0.5f);
-        
+
         if (matchSound == null)
             matchSound = GenerateChime(660f, 0.2f, 0.8f);
-        
+
         if (victorySound == null)
             victorySound = GenerateFanfare();
-        
+
         if (gameOverSound == null)
             gameOverSound = GenerateSadSound();
-        
+
         if (shapeEnterSound == null)
             shapeEnterSound = GenerateWhoosh();
     }

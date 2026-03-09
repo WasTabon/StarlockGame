@@ -5,14 +5,11 @@ public class ShapeFactory : MonoBehaviour
 {
     public static ShapeFactory Instance { get; private set; }
 
-    [Header("Settings")]
     [SerializeField] private float shapeSize = 0.4f;
 
-    [Header("Physics Material")]
     [SerializeField] private float bounciness = 0.8f;
     [SerializeField] private float friction = 0.1f;
 
-    [Header("References")]
     [SerializeField] private Transform shapesParent;
 
     private Dictionary<ShapeType, Sprite> shapeSprites = new Dictionary<ShapeType, Sprite>();
@@ -36,7 +33,7 @@ public class ShapeFactory : MonoBehaviour
         if (isInitialized) return;
 
         CreatePhysicsMaterial();
-        LoadOrGenerateSprites();
+        LoadSprites();
         isInitialized = true;
     }
 
@@ -47,14 +44,24 @@ public class ShapeFactory : MonoBehaviour
         bouncyMaterial.friction = friction;
     }
 
-    private void LoadOrGenerateSprites()
+    private void LoadSprites()
     {
         shapeSprites.Clear();
 
         foreach (ShapeType shapeType in System.Enum.GetValues(typeof(ShapeType)))
         {
-            Sprite sprite = Resources.Load<Sprite>($"Shapes/{shapeType}");
-            
+            Sprite sprite = null;
+
+            if (AddressableAssetService.Instance != null)
+            {
+                sprite = AddressableAssetService.Instance.GetSprite($"Shapes/{shapeType}");
+            }
+
+            if (sprite == null)
+            {
+                sprite = Resources.Load<Sprite>($"Shapes/{shapeType}");
+            }
+
             if (sprite == null)
             {
                 Texture2D texture = ShapeVisualGenerator.GenerateShapeTexture(shapeType);
@@ -73,12 +80,12 @@ public class ShapeFactory : MonoBehaviour
         }
 
         GameObject shapeObj = new GameObject($"Shape_{type}_{color}");
-        
+
         if (shapesParent != null)
         {
             shapeObj.transform.SetParent(shapesParent);
         }
-        
+
         shapeObj.transform.localPosition = position;
         shapeObj.transform.localScale = Vector3.one * shapeSize;
         shapeObj.transform.localRotation = Quaternion.identity;
@@ -111,7 +118,7 @@ public class ShapeFactory : MonoBehaviour
     {
         ShapeType randomType = (ShapeType)Random.Range(0, System.Enum.GetValues(typeof(ShapeType)).Length);
         ShapeColor randomColor = (ShapeColor)Random.Range(0, System.Enum.GetValues(typeof(ShapeColor)).Length);
-        
+
         return CreateShape(randomType, randomColor, position);
     }
 
@@ -119,7 +126,7 @@ public class ShapeFactory : MonoBehaviour
     {
         Shape shape1 = CreateShape(type, color, position1);
         Shape shape2 = CreateShape(type, color, position2);
-        
+
         return new Shape[] { shape1, shape2 };
     }
 
@@ -156,7 +163,7 @@ public class ShapeFactory : MonoBehaviour
     {
         bounciness = newBounciness;
         friction = newFriction;
-        
+
         if (bouncyMaterial != null)
         {
             bouncyMaterial.bounciness = bounciness;
